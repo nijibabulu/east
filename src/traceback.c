@@ -64,7 +64,7 @@ sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
 
   smat = NULL;
   if(iupac) 
-    smat = init_iupac_smat(1,0);
+    smat = init_iupac_smat(1,0,0);
   else if(blosum)
     smat = init_blosum_smat(0);
 
@@ -156,7 +156,7 @@ nw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
 
   smat = NULL;
   if(iupac) 
-    smat = init_iupac_smat(1,0);
+    smat = init_iupac_smat(1,0,0);
   else if(blosum)
     smat = init_blosum_smat(0);
 

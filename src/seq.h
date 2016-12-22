@@ -43,7 +43,7 @@ seq_t *     reverse_complement(seq_t *seq);
 
 alphabet_t * find_alphabet(const char *name);
 
-char ** init_iupac_smat(int M, int N);
+char ** init_iupac_smat(int M, int A, int N);
 char ** init_blosum_smat(int N);
 
 void free_smat(char ** mat);

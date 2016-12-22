@@ -28,7 +28,7 @@ rmat_new(seq_t * sbjct, seq_t * query)
 }
 
 void
-rmat_recurse(rmat_t *rmat, score_t M, score_t N, score_t Q, score_t R, long Z, long Y, int nw, int iupac, int blosum) 
+rmat_recurse(rmat_t *rmat, score_t M, score_t A, score_t N, score_t Q, score_t R, long Z, long Y, int nw, int iupac, int blosum) 
 {
   int i,j;
   seq_t *s,*q;
@@ -37,7 +37,7 @@ rmat_recurse(rmat_t *rmat, score_t M, score_t N, score_t Q, score_t R, long Z, l
 
   smat = NULL;
   if(iupac)
-    smat = init_iupac_smat(M,N);
+    smat = init_iupac_smat(M,A,N);
   else if(blosum)
     smat = init_blosum_smat(N);
 

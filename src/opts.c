@@ -1,9 +1,9 @@
 #include "opts.h"
 
-score_t M,N,Q,R;
+score_t A,M,N,Q,R;
 long Y,Z;
 int nw,rev,iupac,blosum,score_only,subject_output,table_format;
-char optstring[] = "Tusaf:tbN:M:Q:R:Y:Z:nBh";
+char optstring[] = "TusaA:f:tbN:M:Q:R:Y:Z:nBh";
 int fasta_wrap = 60; /* TODO: this could be an option. for now hard code */
 
 void
@@ -11,6 +11,7 @@ print_standard_opts(FILE *f)
 {
   fprintf(f, "  -M S       Use score for match score [5]\n");
   fprintf(f, "  -N S       Use score for mismatch score [-4]\n");
+  fprintf(f, "  -A S       Penalty for ambiguous matches [-1]\n");
   fprintf(f, "  -Q S       Use score for gap opening penalty [10]\n");
   fprintf(f, "  -R S       Use score for gap extending penalty [10]\n");
   /*fprintf(f, "  -m MAT     Use a specified matrix existing in sharedir\n");
@@ -41,6 +42,7 @@ init_standard_opts() {
   R = 10;
   Y = 0;
   Z = 0;
+  A = -1;
   score_only = 0;
   subject_output = 0;
   table_format = 0;
@@ -53,6 +55,7 @@ process_standard_opt(char c)
   case 'a': iupac = 1; break;
   case 'b': blosum = 1; break;
   case 'B': M = 1; N = -3; Q = 5; R = 2; break; /* ncbi-blast mode */
+  case 'A': A = strtol(optarg, NULL, 0); break;
   case 'M': M = strtol(optarg, NULL, 0); break;
   case 'N': N = strtol(optarg, NULL, 0); break;
   case 'Y': Y = strtol(optarg, NULL, 0); break;

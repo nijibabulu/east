@@ -11,7 +11,7 @@ void print_standard_opts(FILE *);
 void init_standard_opts();
 int process_standard_opt(char c);
 
-extern score_t M,N,Q,R;
+extern score_t M,A,N,Q,R;
 extern long Y,Z;
 extern int nw,rev, iupac,blosum,score_only,subject_output,fasta_wrap,table_format;
 extern char optstring[];

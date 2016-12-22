@@ -221,7 +221,7 @@ seq_delete(seq_t **seqp)
 }
 
 char ** 
-init_iupac_smat(int M, int N)
+init_iupac_smat(int M, int A, int N)
 {
   char ** iupac_mat = malloc(sizeof(char*) * 256);
   int i,j;
@@ -237,41 +237,41 @@ init_iupac_smat(int M, int N)
   iupac_mat['T']['U'] = M; iupac_mat['U']['T'] = M;
 
 
-  iupac_mat['M']['A'] = M; iupac_mat['M']['C'] = M;
-  iupac_mat['A']['M'] = M; iupac_mat['C']['M'] = M;
+  iupac_mat['M']['A'] = M+A; iupac_mat['M']['C'] = M+A;
+  iupac_mat['A']['M'] = M+A; iupac_mat['C']['M'] = M+A;
 
-  iupac_mat['R']['A'] = M; iupac_mat['R']['G'] = M;
-  iupac_mat['A']['R'] = M; iupac_mat['G']['R'] = M;
+  iupac_mat['R']['A'] = M+A; iupac_mat['R']['G'] = M+A;
+  iupac_mat['A']['R'] = M+A; iupac_mat['G']['R'] = M+A;
 
-  iupac_mat['W']['A'] = M; iupac_mat['W']['T'] = M; iupac_mat['W']['U'] = M;
-  iupac_mat['A']['Q'] = M; iupac_mat['T']['W'] = M; iupac_mat['U']['W'] = M;
+  iupac_mat['W']['A'] = M+A; iupac_mat['W']['T'] = M+A; iupac_mat['W']['U'] = M+A;
+  iupac_mat['A']['Q'] = M+A; iupac_mat['T']['W'] = M+A; iupac_mat['U']['W'] = M+A;
   
-  iupac_mat['S']['C'] = M; iupac_mat['S']['G'] = M;
-  iupac_mat['C']['S'] = M; iupac_mat['G']['S'] = M;
+  iupac_mat['S']['C'] = M+A; iupac_mat['S']['G'] = M+A;
+  iupac_mat['C']['S'] = M+A; iupac_mat['G']['S'] = M+A;
 
-  iupac_mat['Y']['C'] = M; iupac_mat['Y']['T'] = M; iupac_mat['Y']['U'] = M; 
-  iupac_mat['C']['Y'] = M; iupac_mat['T']['Y'] = M; iupac_mat['U']['Y'] = M;
+  iupac_mat['Y']['C'] = M+A; iupac_mat['Y']['T'] = M+A; iupac_mat['Y']['U'] = M+A; 
+  iupac_mat['C']['Y'] = M+A; iupac_mat['T']['Y'] = M+A; iupac_mat['U']['Y'] = M+A;
 
-  iupac_mat['K']['G'] = M; iupac_mat['K']['T'] = M; iupac_mat['K']['U'] = M;
-  iupac_mat['G']['K'] = M; iupac_mat['T']['K'] = M; iupac_mat['U']['K'] = M;
+  iupac_mat['K']['G'] = M+A; iupac_mat['K']['T'] = M+A; iupac_mat['K']['U'] = M+A;
+  iupac_mat['G']['K'] = M+A; iupac_mat['T']['K'] = M+A; iupac_mat['U']['K'] = M+A;
 
-  iupac_mat['V']['A'] = M; iupac_mat['V']['C'] = M; iupac_mat['V']['G'] = M;
-  iupac_mat['A']['V'] = M; iupac_mat['C']['V'] = M; iupac_mat['G']['V'] = M;
+  iupac_mat['V']['A'] = M+A; iupac_mat['V']['C'] = M+A; iupac_mat['V']['G'] = M+A;
+  iupac_mat['A']['V'] = M+A; iupac_mat['C']['V'] = M+A; iupac_mat['G']['V'] = M+A;
 
-  iupac_mat['H']['A'] = M; iupac_mat['H']['C'] = M; 
-  iupac_mat['H']['T'] = M; iupac_mat['H']['U'] = M;
-  iupac_mat['A']['H'] = M; iupac_mat['C']['H'] = M; 
-  iupac_mat['T']['H'] = M; iupac_mat['U']['H'] = M;
+  iupac_mat['H']['A'] = M+A; iupac_mat['H']['C'] = M+A; 
+  iupac_mat['H']['T'] = M+A; iupac_mat['H']['U'] = M+A;
+  iupac_mat['A']['H'] = M+A; iupac_mat['C']['H'] = M+A; 
+  iupac_mat['T']['H'] = M+A; iupac_mat['U']['H'] = M+A;
 
-  iupac_mat['D']['A'] = M; iupac_mat['D']['G'] = M; 
-  iupac_mat['D']['T'] = M; iupac_mat['D']['U'] = M;
-  iupac_mat['A']['D'] = M; iupac_mat['G']['D'] = M; 
-  iupac_mat['T']['D'] = M; iupac_mat['U']['D'] = M;
+  iupac_mat['D']['A'] = M+A; iupac_mat['D']['G'] = M+A; 
+  iupac_mat['D']['T'] = M+A; iupac_mat['D']['U'] = M+A;
+  iupac_mat['A']['D'] = M+A; iupac_mat['G']['D'] = M+A; 
+  iupac_mat['T']['D'] = M+A; iupac_mat['U']['D'] = M+A;
 
-  iupac_mat['B']['C'] = M; iupac_mat['B']['G'] = M; 
-  iupac_mat['B']['T'] = M; iupac_mat['B']['U'] = M;
-  iupac_mat['C']['B'] = M; iupac_mat['G']['B'] = M; 
-  iupac_mat['T']['B'] = M; iupac_mat['U']['B'] = M;
+  iupac_mat['B']['C'] = M+A; iupac_mat['B']['G'] = M+A; 
+  iupac_mat['B']['T'] = M+A; iupac_mat['B']['U'] = M+A;
+  iupac_mat['C']['B'] = M+A; iupac_mat['G']['B'] = M+A; 
+  iupac_mat['T']['B'] = M+A; iupac_mat['U']['B'] = M+A;
   return iupac_mat;
 }
 

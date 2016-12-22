@@ -95,14 +95,14 @@ main(int argc, char *argv[])
       rmat_delete(&rmat);
     rmat = rmat_new(sbjct, query);
   }
-  rmat_recurse(rmat, M, N, Q, R, z, y, nw, iupac, blosum);
+  rmat_recurse(rmat, M, A, N, Q, R, z, y, nw, iupac, blosum);
   if(nw) ftb = nw_tb(rmat,PLUS_STRAND,PLUS_STRAND,iupac,blosum);
   else   ftb = sw_tb(rmat,PLUS_STRAND,PLUS_STRAND,iupac,blosum);
   tb = ftb;
   if(rev && !strcmp(a->name, "DNA")) { /* also RNA when we support this */
     rsbjct = reverse_complement(sbjct);
     rmat->s = rsbjct;
-    rmat_recurse(rmat, M, N, Q, R, z, y, nw, iupac, blosum);
+    rmat_recurse(rmat, M, A, N, Q, R, z, y, nw, iupac, blosum);
     if(nw) rtb = nw_tb(rmat,MINUS_STRAND,PLUS_STRAND,iupac,blosum);
     else   rtb = sw_tb(rmat,MINUS_STRAND,PLUS_STRAND,iupac,blosum);
     if(rtb->s > tb->s) tb = rtb;

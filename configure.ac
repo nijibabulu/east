@@ -8,7 +8,7 @@ AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC_C99
 
 # Checks for libraries.
 AC_CHECK_LIB(m,sqrt,[],[AC_MSG_ERROR("math lib required")])

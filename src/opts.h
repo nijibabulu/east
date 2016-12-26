@@ -13,7 +13,8 @@ int process_standard_opt(char c);
 
 extern score_t M,A,N,Q,R;
 extern long Y,Z;
-extern int nw,rev, iupac,blosum,score_only,subject_output,fasta_wrap,table_format;
+extern int nw,rev, iupac,blosum,score_only,subject_output,fasta_wrap,table_format,header;
+extern char *matrix_name;
 extern char optstring[];
 
 #endif /* OPTS_H */

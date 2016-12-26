@@ -22,30 +22,17 @@ rmat_new(seq_t * sbjct, seq_t * query)
   rmat->max = 0;
   rmat->maxi = 0;
   rmat->maxj = 0;
-  rmat->ka = NULL;
 
   return rmat;
 }
 
 void
-rmat_recurse(rmat_t *rmat, score_t M, score_t A, score_t N, score_t Q, score_t R, long Z, long Y, int nw, int iupac, int blosum) 
+rmat_recurse(rmat_t *rmat, smat_t * smat, score_t Q, score_t R, int nw)
 {
   int i,j;
   seq_t *s,*q;
   score_t **ms, **gs, tmp_score, match_score;
-  char **mp, **gp, **smat;
-
-  smat = NULL;
-  if(iupac)
-    smat = init_iupac_smat(M,A,N);
-  else if(blosum)
-    smat = init_blosum_smat(N);
-
-  if(!nw && (rmat->ka == NULL || rmat->ka->M != M || rmat->ka->N != N)) {
-    if(rmat->ka != NULL)
-      free(rmat->ka);
-    rmat->ka = kaparams_estimate(M, N);
-  }
+  char **mp, **gp;
 
   s = rmat->s;
   q = rmat->q;
@@ -87,9 +74,7 @@ rmat_recurse(rmat_t *rmat, score_t M, score_t A, score_t N, score_t Q, score_t R
 
   for(i = 1; i < s->len+1; i++) {
     for(j = 1; j < q->len+1; j++) {
-      if(smat) match_score = smat[(int)s->seq[i-1]][(int)q->seq[j-1]];
-      else if(s->seq[i-1] == q->seq[j-1]) match_score = M;
-      else                                match_score = N;
+      match_score = smat->s[(int)s->seq[i-1]][(int)q->seq[j-1]];
 
       mp[i][j] = 5;
       ms[i][j] = match_score + gs[i-1][j-1];
@@ -126,14 +111,6 @@ rmat_recurse(rmat_t *rmat, score_t M, score_t A, score_t N, score_t Q, score_t R
         rmat->maxj = j;
       }
     }
-  }
-  if(!nw) {
-    rmat->expect = kaparams_expect(rmat->ka, rmat->max, Z, Y);
-    rmat->bits = kaparams_bits(rmat->ka, rmat->max);
-  }
-  if(smat){
-    free_smat(smat);
-    free(smat);
   }
 }
 

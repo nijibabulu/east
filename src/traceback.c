@@ -52,7 +52,7 @@ _tb_init(rmat_t *rmat, int nw, int sbjct_strand, int query_strand)
 }
 
 tb_t *
-sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
+sw_tb(rmat_t *rmat, smat_t *smat, int sbjct_strand, int query_strand, long Z, long Y)
 {
   pos_t i,j;
   char p, match, s,q;
@@ -60,25 +60,18 @@ sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
   tb_t *tb;
   tb_node_t *cur;
   score_t sc;
-  char ** smat;
-
-  smat = NULL;
-  if(iupac) 
-    smat = init_iupac_smat(1,0,0);
-  else if(blosum)
-    smat = init_blosum_smat(0);
+  kaparams_t *ka = kaparams_estimate(smat->M,smat->N);
 
   tb = _tb_init(rmat, 0, sbjct_strand, query_strand);
 
   tb->s = rmat->max;
-  tb->bits = rmat->bits;
-  tb->expect = rmat->expect;
+  tb->bits = kaparams_bits(ka, rmat->max);
+  tb->expect = kaparams_expect(ka, rmat->max, Z, Y);
        
   if(blosum) { match = rmat->s->seq[rmat->maxi-1]; }
   else { match = '|'; }
   _tb_push_front(tb, _tb_init_node(rmat->s->seq[rmat->maxi-1],match,
         rmat->q->seq[rmat->maxj-1], rmat->max, rmat->maxi, rmat->maxj));
- 
 
   in_gap = 0;
   i = tb->first->i;
@@ -111,13 +104,11 @@ sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
         break;
     }
     if(i<= 0 && j <= 0) break;
-    if(iupac) { if(smat[(int)s][(int)q]) match = '|'; else match = ' '; }
-    else if(blosum) { 
-      if(s==q) match = s; 
-      else if(smat[(int)s][(int)q] > 0) match = '+';
-      else match = ' ';
-    }
-    else      { if(s == q) match = '|'; else match = ' '; }
+
+    if(toupper(s) == toupper(q)) match = '|';
+    else if(smat->s[(int)s][(int)q] > 0) match = '+';
+    else match = ' ';
+
     switch(p) {
       case 0: case 1: case 3: sc = rmat->ms[i][j]; break;
       case 2: case 4: case 5: sc = rmat->gs[i][j]; break;
@@ -133,32 +124,19 @@ sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
    if(query_strand == MINUS_STRAND)
     for(cur = tb->first; cur != NULL; cur = cur->next)
       cur->j = rmat->q->len - cur->j + 1;
-  
-  if(smat) {
-    free_smat(smat);
-    free(smat);
-  }
-
 
   return tb;
 }
 
 
 tb_t *
-nw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
+nw_tb(rmat_t *rmat, smat_t *smat, int sbjct_strand, int query_strand)
 {
   tb_t *tb;
   pos_t i,j;
   char match,p,s,q;
   int in_gap;
   score_t sc;
-  char ** smat;
-
-  smat = NULL;
-  if(iupac) 
-    smat = init_iupac_smat(1,0,0);
-  else if(blosum)
-    smat = init_blosum_smat(0);
 
   tb = _tb_init(rmat, 1, sbjct_strand, query_strand);
 
@@ -190,13 +168,11 @@ nw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
       q = rmat->q->seq[j-1];
       break;
     }
-    if(iupac) { if(smat[(int)s][(int)q]) match = '|'; else match = ' '; }
-    else if(blosum) { 
-      if(s==q) match = s; 
-      else if(smat[(int)s][(int)q] > 0) match = '+';
-      else match = ' ';
-    }
-    else      { if(s == q) match = '|'; else match = ' '; }
+
+    if(s == q) match = '|';
+    else if(smat->s[(int)s][(int)q] > 0) match = '+';
+    else match = ' ';
+
     _tb_push_front(tb, _tb_init_node(s,match,q,sc,i,j));
 
     if(p == 0 || p == 5) { i--; j--; }
@@ -205,10 +181,6 @@ nw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum)
     else { printf("strange value %d at (%d,%d) in_gap=%d\n", p,i,j,in_gap); }
   }
 
-  if(smat) {
-    free_smat(smat);
-    free(smat);
-  }
   return tb;
 }
 
@@ -222,8 +194,8 @@ tb_print(FILE *out, tb_t *tb)
   s = tb->rmat->s;
   q = tb->rmat->q;
 
-  fprintf(out, "Query: %s (%d letters)\n\n", q->name, (int) q->len);
-  fprintf(out, "Subject: %s (%d letters)\n\n", s->name, (int) s->len);
+  fprintf(out, "Query: %s (%d letters)\n", q->name, (int) q->len);
+  fprintf(out, "Subject: %s (%d letters)\n", s->name, (int) s->len);
   pct_id = floor((float)tb->identities/(float)tb->len *100.);
   if(tb->nw) 
     fprintf(out, " Score = %d, Identities = %d/%d (%.0f%%)  ",
@@ -266,7 +238,7 @@ tb_print_sbjct_fasta(FILE *out, tb_t *tb, seq_t *sbjct)
   fprintf(out, ">%s:%d-%d\n", sbjct->name, start, end);
 
   for(pos = 0; pos < end-start; pos += fasta_wrap) 
-    printf("%.*s\n", MIN((int)fasta_wrap,(int)end - (pos+start)),
+    fprintf(out, "%.*s\n", MIN((int)fasta_wrap,(int)end - (pos+start)),
         sbjct->seq + (pos+start));
 }
 

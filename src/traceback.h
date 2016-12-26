@@ -2,6 +2,7 @@
 #define TRACEBACK_H
 
 #include "recursion.h"
+#include "statistics.h"
 #include "opts.h"
 
 typedef struct _tb_node_t {
@@ -28,11 +29,12 @@ typedef struct _tb_t {
 
 /* trace back functions */
 
-tb_t * sw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum);
-tb_t * nw_tb(rmat_t *rmat, int sbjct_strand, int query_strand, int iupac, int blosum);
+tb_t * sw_tb(rmat_t *rmat, smat_t *smat, int sbjct_strand, int query_strand, long Z, long Y);
+tb_t * nw_tb(rmat_t *rmat, smat_t *smat, int sbjct_strand, int query_strand);
 void   tb_print(FILE *out,tb_t *tb);
 void   tb_print_sbjct_fasta(FILE *out, tb_t *tb, seq_t *sbjct);
 void   tb_print_table_row(FILE * out, tb_t *tb);
+void   tb_print_table_header(FILE *out);
 void   tb_delete(tb_t **tb);
 
 #endif /* TRACEBACK_H */

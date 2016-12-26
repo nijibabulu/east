@@ -21,8 +21,8 @@ typedef struct _FASTAFILE {
 typedef struct _seq_t {
   char *name;
   char *seq;
-  char *enc;
   size_t len;
+  char *enc;
 } seq_t;
 
 typedef struct _alphabet_t {
@@ -30,7 +30,7 @@ typedef struct _alphabet_t {
   char wildcard;
   char name[20];
   char letters[127];
-  int map[127];
+  int map[256];
 } alphabet_t;
 
 FASTAFILE * open_fasta(char * filename);
@@ -43,8 +43,9 @@ seq_t *     reverse_complement(seq_t *seq);
 
 alphabet_t * find_alphabet(const char *name);
 
-char ** init_iupac_smat(int M, int A, int N);
-char ** init_blosum_smat(int N);
+seq_t *     seq_alloc(const char *name, size_t len);
+seq_t *     seq_upper(const seq_t *orig);
+void        seq_write_fasta(seq_t *seq, FILE *out, int wrap);
+void        seq_delete(seq_t **seqp);
 
-void free_smat(char ** mat);
 #endif /* SEQ_H */

@@ -24,7 +24,7 @@ usage()
 void
 print_alignment_header(FILE *f)
 {
-  fprintf(f, "East 1.0 -- Simple, non-seeded alignment\n");
+  fprintf(f, "East 1.0 -- Smith-Waterman and Needleman-Wunsch Alignments\nn");
   fprintf(f, "\n");
   fprintf(f, "Copyright (C) 2010 Bob Zimmermann\n");
   fprintf(f, "\n");
@@ -48,6 +48,7 @@ int
 main(int argc, char *argv[])
 {
   FASTAFILE *sf,*qf;
+  char ** test;
   extern char *optarg;
   extern int optind;
   long y,z;
@@ -58,7 +59,7 @@ main(int argc, char *argv[])
   rmat_t *rmat;
   tb_t *tb, *ftb, *rtb;
   kaparams_t *ka;
-  /*smat_t *smat;*/
+  smat_t *smat;
   char c;
   int header_printed=0;
 
@@ -67,8 +68,16 @@ main(int argc, char *argv[])
   while ((c = getopt_long(argc, argv, optstring, opts, &longindex)) != -1) {
     if(process_standard_opt(c) != 0) usage();
   }
-  a = find_alphabet("DNA");
-  /*smat = smat_create_from_MN(a, M, N);*/
+  if(matrix_name != NULL) 
+      smat = smat_read(matrix_name,N);
+  else if(iupac)  {
+      a = find_alphabet("IUPAC");
+      smat = smat_iupac(M, A, N);
+  }
+  else {
+      a = find_alphabet("DNA");
+      smat = smat_create_from_MN(a, M, N);
+  }
 
   argc -= optind;
   argv += optind;
@@ -80,10 +89,8 @@ main(int argc, char *argv[])
   rtb = ftb = NULL;
   for(sf = open_fasta(argv[0]), sbjct = get_next_sequence(sf,1);
       sbjct != NULL;  sbjct = get_next_sequence(sf,1)) {
-  /*sbjct = read_fasta(argv[0], 1);*/
     for(qf = open_fasta(argv[1]), query = get_next_sequence(qf,1);
         query != NULL; query = get_next_sequence(qf, 1)) {
-  /*query = read_fasta(argv[1], 1);*/
 
   if(Y) y = Y; else y = query->len;
   if(Z) z = Z; else z = sbjct->len;
@@ -95,16 +102,16 @@ main(int argc, char *argv[])
       rmat_delete(&rmat);
     rmat = rmat_new(sbjct, query);
   }
-  rmat_recurse(rmat, M, A, N, Q, R, z, y, nw, iupac, blosum);
-  if(nw) ftb = nw_tb(rmat,PLUS_STRAND,PLUS_STRAND,iupac,blosum);
-  else   ftb = sw_tb(rmat,PLUS_STRAND,PLUS_STRAND,iupac,blosum);
+  rmat_recurse(rmat, smat, Q, R, nw);
+  if(nw) ftb = nw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND);
+  else   ftb = sw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND, z, y);
   tb = ftb;
-  if(rev && !strcmp(a->name, "DNA")) { /* also RNA when we support this */
+  if(rev && (!strcmp(a->name, "DNA") || !strcmp(a->name, "IUPAC"))) { /* also RNA when we support this */
     rsbjct = reverse_complement(sbjct);
     rmat->s = rsbjct;
-    rmat_recurse(rmat, M, A, N, Q, R, z, y, nw, iupac, blosum);
-    if(nw) rtb = nw_tb(rmat,MINUS_STRAND,PLUS_STRAND,iupac,blosum);
-    else   rtb = sw_tb(rmat,MINUS_STRAND,PLUS_STRAND,iupac,blosum);
+    rmat_recurse(rmat, smat, Q, R, nw);
+    if(nw) rtb = nw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND);
+    else   rtb = sw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND, z, y);
     if(rtb->s > tb->s) tb = rtb;
   }
   if(score_only) 
@@ -119,9 +126,11 @@ main(int argc, char *argv[])
     tb_print_table_row(stdout, tb);
   }
   else {
-    print_alignment_header(stdout);
-    if(!nw) 
-      kaparams_print(stdout, ka);
+    if(header) {
+        print_alignment_header(stdout);
+        if(!nw) 
+          kaparams_print(stdout, ka);
+    }
     tb_print(stdout, tb);
     tb_delete(&ftb);
     if(rtb != NULL)

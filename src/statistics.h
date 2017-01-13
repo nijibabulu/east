@@ -20,5 +20,6 @@ void         kaparams_print(FILE *, kaparams_t *);
 double       kaparams_expect(kaparams_t *, score_t, long, long);
 score_t      kaparams_score(kaparams_t *ka, double e, long X, long Y);
 double       kaparams_bits(kaparams_t *, score_t);
+void         kaparams_delete(kaparams_t **kap);
 
 #endif /* STATISTICS_H */

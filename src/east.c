@@ -24,7 +24,7 @@ usage()
 void
 print_alignment_header(FILE *f)
 {
-  fprintf(f, "East 1.0 -- Smith-Waterman and Needleman-Wunsch Alignments\nn");
+  fprintf(f, "East 1.0 -- Smith-Waterman and Needleman-Wunsch Alignments\n");
   fprintf(f, "\n");
   fprintf(f, "Copyright (C) 2010 Bob Zimmermann\n");
   fprintf(f, "\n");
@@ -56,7 +56,7 @@ main(int argc, char *argv[])
   pos_t pos;
   alphabet_t *a;
   seq_t *query,*sbjct,*rsbjct;
-  rmat_t *rmat;
+  rmat_t *rmat,*nsrmat;
   tb_t *tb, *ftb, *rtb;
   kaparams_t *ka;
   smat_t *smat;
@@ -86,6 +86,7 @@ main(int argc, char *argv[])
     usage();
   
   rmat = NULL;
+  rsbjct = NULL;
   rtb = ftb = NULL;
   for(sf = open_fasta(argv[0]), sbjct = get_next_sequence(sf,1);
       sbjct != NULL;  sbjct = get_next_sequence(sf,1)) {
@@ -101,8 +102,10 @@ main(int argc, char *argv[])
     if(rmat != NULL)
       rmat_delete(&rmat);
     rmat = rmat_new(sbjct, query);
+    nsrmat = rmat_new(sbjct, query);
   }
   rmat_recurse(rmat, smat, Q, R, nw);
+  rmat_recurse_noshadow(nsrmat, smat, Q, R, nw);
   if(nw) ftb = nw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND);
   else   ftb = sw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND, z, y);
   tb = ftb;
@@ -113,7 +116,10 @@ main(int argc, char *argv[])
     if(nw) rtb = nw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND);
     else   rtb = sw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND, z, y);
     if(rtb->s > tb->s) tb = rtb;
+    else rmat->s = sbjct;
   }
+  if(print_matrix)
+    rmat_print(nsrmat,stdout);
   if(score_only) 
     printf("%d\n", tb->s);
   else if(subject_output) 
@@ -136,9 +142,16 @@ main(int argc, char *argv[])
     if(rtb != NULL)
       tb_delete(&rtb);
   }
+  seq_delete(&query);
     }
   close_fasta(qf);
+  rmat_delete(&rmat);
+  seq_delete(&sbjct);
+  if(rsbjct != NULL) 
+    seq_delete(&rsbjct);
   }
   close_fasta(sf);
+  smat_delete(&smat);
+  kaparams_delete(&ka);
   return 0;
 }

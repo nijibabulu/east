@@ -111,3 +111,10 @@ kaparams_print(FILE *f, kaparams_t *ka)
   fprintf(f, "Karlin-Altschul parameters for match=%d, mismatch=%d: "
       "K=%0.3f lambda=%0.3f\n\n", ka->M, ka->N, ka->K, ka->L);
 }
+
+void
+kaparams_delete(kaparams_t **kap)
+{
+  free(*kap);
+  *kap = NULL;
+}

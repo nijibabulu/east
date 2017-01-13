@@ -2,8 +2,8 @@
 
 score_t A,M,N,Q,R;
 long Y,Z;
-int nw,rev,iupac,blosum,score_only,subject_output,table_format,header;
-char optstring[] = "TusaA:f:tbm:N:M:Q:R:Y:Z:nBHh";
+int nw,rev,iupac,blosum,score_only,subject_output,table_format,header,print_matrix;
+char optstring[] = "TusaA:f:tbm:N:M:Q:R:Y:Z:nBHhx";
 char *matrix_name;
 int fasta_wrap = 60; /* TODO: this could be an option. for now hard code */
 
@@ -29,6 +29,7 @@ print_standard_opts(FILE *f)
   fprintf(f, "  -H      Skip header in output\n");
   /*fprintf(f, "  -f F       Use format F for output. Supported formats:\n");
   output_print_format_strings(f,16);*/
+  /*fprintf(f, "  -x         Print recursion matrix\n");*/
   fprintf(f, "  -h      Print this help message and exit.\n");
 }
 
@@ -50,6 +51,7 @@ init_standard_opts() {
   subject_output = 0;
   table_format = 0;
   matrix_name = NULL;
+  print_matrix = 0;
 }
 
 int
@@ -73,6 +75,7 @@ process_standard_opt(char c)
   case 'u': subject_output = 1; break;
   case 'T': table_format = 1; break;
   case 'H': header = 0; break;
+  case 'x': print_matrix = 1; break;
   case 'h': case '?': return c;
   }
   return 0;

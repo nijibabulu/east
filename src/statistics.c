@@ -2,7 +2,7 @@
 
 /* code extracted from perl code in wublastall */
 
-inline double
+double
 _kaparams_sum(double lambda, score_t M, score_t N)
 {
   /* sum of all scores--matches are 1/4 of the scores.  

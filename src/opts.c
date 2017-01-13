@@ -2,8 +2,13 @@
 
 score_t A,M,N,Q,R;
 long Y,Z;
+<<<<<<< HEAD
 int nw,rev,iupac,blosum,score_only,subject_output,table_format;
 char optstring[] = "TusaA:f:tbm:N:M:Q:R:Y:Z:nBh";
+=======
+int nw,rev,iupac,blosum,score_only,subject_output,table_format,header;
+char optstring[] = "TusaA:f:tbm:N:M:Q:R:Y:Z:nBHh";
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
 char *matrix_name;
 int fasta_wrap = 60; /* TODO: this could be an option. for now hard code */
 
@@ -14,20 +19,32 @@ print_standard_opts(FILE *f)
   fprintf(f, "  -N S    Mismatch score [-4]\n");
   fprintf(f, "  -A S    Penalty for ambiguous matches [-1]\n");
   fprintf(f, "  -Q S    Gap opening penalty [10]\n");
+<<<<<<< HEAD
   fprintf(f, "  -R S    Gap extention penalty [10]\n");
+=======
+  fprintf(f, "  -R S    Gap extention penalty [9]\n");
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   fprintf(f, "  -m M    Use a specified matrix existing in sharedir\n");
   fprintf(f, "          or a complete path to a matrix file (e.g. BLOSUM)\n");
   fprintf(f, "  -Y L    Effective query length for Karlin-Altschul stats\n");
   fprintf(f, "  -Z L    Effective subject length for Karlin-Altschul stats\n");
   fprintf(f, "  -a      Treat all ambiguous matches except N as matches \n");
+<<<<<<< HEAD
+=======
+  fprintf(f, "          with score M+A\n");
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   fprintf(f, "  -n      Use Needleman-Wunsch mode (global alignment)\n");
   fprintf(f, "  -t      Only search the top strand of subject\n");
   fprintf(f, "  -s      Only print the score of the alignment\n");
   fprintf(f, "  -u      Output the aligned region of the subject (fasta)\n");
   fprintf(f, "  -T      Output in table format\n");
+<<<<<<< HEAD
+=======
+  fprintf(f, "  -H      Skip header in output\n");
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   /*fprintf(f, "  -f F       Use format F for output. Supported formats:\n");
   output_print_format_strings(f,16);*/
-  fprintf(f, "  -h         Print this help message and exit.\n");
+  fprintf(f, "  -h      Print this help message and exit.\n");
 }
 
 void
@@ -39,10 +56,11 @@ init_standard_opts() {
   M = 5;
   N = -4;
   Q = 10;
-  R = 10;
+  R = 9;
   Y = 0;
   Z = 0;
   A = -1;
+  header = 1;
   score_only = 0;
   subject_output = 0;
   table_format = 0;
@@ -69,6 +87,7 @@ process_standard_opt(char c)
   case 's': score_only = 1; break;
   case 'u': subject_output = 1; break;
   case 'T': table_format = 1; break;
+  case 'H': header = 0; break;
   case 'h': case '?': return c;
   }
   return 0;

@@ -24,7 +24,7 @@ usage()
 void
 print_alignment_header(FILE *f)
 {
-  fprintf(f, "East 1.0 -- Simple, non-seeded alignment\n");
+  fprintf(f, "East 1.0 -- Smith-Waterman and Needleman-Wunsch Alignments\nn");
   fprintf(f, "\n");
   fprintf(f, "Copyright (C) 2010 Bob Zimmermann\n");
   fprintf(f, "\n");
@@ -70,8 +70,15 @@ main(int argc, char *argv[])
   }
   if(matrix_name != NULL) 
       smat = smat_read(matrix_name,N);
+<<<<<<< HEAD
   else if(iupac) 
       smat = smat_iupac(M, A, N);
+=======
+  else if(iupac)  {
+      a = find_alphabet("IUPAC");
+      smat = smat_iupac(M, A, N);
+  }
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   else {
       a = find_alphabet("DNA");
       smat = smat_create_from_MN(a, M, N);
@@ -100,14 +107,22 @@ main(int argc, char *argv[])
       rmat_delete(&rmat);
     rmat = rmat_new(sbjct, query);
   }
+<<<<<<< HEAD
   rmat_recurse(rmat, smat, M, A, N, Q, R, z, y, nw);
+=======
+  rmat_recurse(rmat, smat, Q, R, nw);
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   if(nw) ftb = nw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND);
   else   ftb = sw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND, z, y);
   tb = ftb;
-  if(rev && !strcmp(a->name, "DNA")) { /* also RNA when we support this */
+  if(rev && (!strcmp(a->name, "DNA") || !strcmp(a->name, "IUPAC"))) { /* also RNA when we support this */
     rsbjct = reverse_complement(sbjct);
     rmat->s = rsbjct;
+<<<<<<< HEAD
     rmat_recurse(rmat, smat, M, A, N, Q, R, z, y, nw);
+=======
+    rmat_recurse(rmat, smat, Q, R, nw);
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
     if(nw) rtb = nw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND);
     else   rtb = sw_tb(rmat, smat, MINUS_STRAND, PLUS_STRAND, z, y);
     if(rtb->s > tb->s) tb = rtb;
@@ -124,9 +139,11 @@ main(int argc, char *argv[])
     tb_print_table_row(stdout, tb);
   }
   else {
-    print_alignment_header(stdout);
-    if(!nw) 
-      kaparams_print(stdout, ka);
+    if(header) {
+        print_alignment_header(stdout);
+        if(!nw) 
+          kaparams_print(stdout, ka);
+    }
     tb_print(stdout, tb);
     tb_delete(&ftb);
     if(rtb != NULL)

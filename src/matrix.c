@@ -40,9 +40,20 @@ smat_create_from_MN(alphabet_t * a, score_t match, score_t mismatch)
           smat->s[i][j] = mismatch;
 
   if(a != NULL) {
+<<<<<<< HEAD
     for(i = 0; i < a->len; i++) 
         if(a->letters[i] != a->wildcard)
             smat->s[a->letters[i]][a->letters[i]] = match;
+=======
+    for(i = 0; i < a->len; i++)  {
+        if(a->letters[i] != a->wildcard) {
+            smat->s[a->letters[i]][a->letters[i]] = match;
+            smat->s[tolower(a->letters[i])][tolower(a->letters[i])] = match;
+            smat->s[a->letters[i]][tolower(a->letters[i])] = match;
+            smat->s[tolower(a->letters[i])][a->letters[i]] = match;
+        }
+    }
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   }
   else {
     for(i = 0; i < MATRIX_SZ; i++)
@@ -155,9 +166,12 @@ smat_iupac(int M, int A, int N)
 {
   smat_t * smat;
   int i,j;
+<<<<<<< HEAD
   for(i = 0; i < MATRIX_SZ; i++) 
     for(j = 0; j < MATRIX_SZ; j++) 
       smat->s[i][j] = N;
+=======
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
 
   smat = smat_create_from_MN(find_alphabet("IUPAC"), M, N);
   smat->s['T']['U'] = M; smat->s['U']['T'] = M;
@@ -169,7 +183,11 @@ smat_iupac(int M, int A, int N)
   smat->s['A']['R'] = M+A; smat->s['G']['R'] = M+A;
 
   smat->s['W']['A'] = M+A; smat->s['W']['T'] = M+A; smat->s['W']['U'] = M+A;
+<<<<<<< HEAD
   smat->s['A']['Q'] = M+A; smat->s['T']['W'] = M+A; smat->s['U']['W'] = M+A;
+=======
+  smat->s['A']['W'] = M+A; smat->s['T']['W'] = M+A; smat->s['U']['W'] = M+A;
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
   
   smat->s['S']['C'] = M+A; smat->s['S']['G'] = M+A;
   smat->s['C']['S'] = M+A; smat->s['G']['S'] = M+A;

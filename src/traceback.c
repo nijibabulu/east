@@ -105,7 +105,11 @@ sw_tb(rmat_t *rmat, smat_t *smat, int sbjct_strand, int query_strand, long Z, lo
     }
     if(i<= 0 && j <= 0) break;
 
+<<<<<<< HEAD
     if(s == q) match = '|';
+=======
+    if(toupper(s) == toupper(q)) match = '|';
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
     else if(smat->s[(int)s][(int)q] > 0) match = '+';
     else match = ' ';
 
@@ -194,8 +198,8 @@ tb_print(FILE *out, tb_t *tb)
   s = tb->rmat->s;
   q = tb->rmat->q;
 
-  fprintf(out, "Query: %s (%d letters)\n\n", q->name, (int) q->len);
-  fprintf(out, "Subject: %s (%d letters)\n\n", s->name, (int) s->len);
+  fprintf(out, "Query: %s (%d letters)\n", q->name, (int) q->len);
+  fprintf(out, "Subject: %s (%d letters)\n", s->name, (int) s->len);
   pct_id = floor((float)tb->identities/(float)tb->len *100.);
   if(tb->nw) 
     fprintf(out, " Score = %d, Identities = %d/%d (%.0f%%)  ",
@@ -238,7 +242,7 @@ tb_print_sbjct_fasta(FILE *out, tb_t *tb, seq_t *sbjct)
   fprintf(out, ">%s:%d-%d\n", sbjct->name, start, end);
 
   for(pos = 0; pos < end-start; pos += fasta_wrap) 
-    printf("%.*s\n", MIN((int)fasta_wrap,(int)end - (pos+start)),
+    fprintf(out, "%.*s\n", MIN((int)fasta_wrap,(int)end - (pos+start)),
         sbjct->seq + (pos+start));
 }
 

@@ -98,6 +98,24 @@ BAIL:
     exit(1);
 }
 
+seq_t *
+seq_alloc(const char *name, size_t len)
+{
+  seq_t *seq = malloc(sizeof(seq_t));
+
+  if(name != NULL) {
+    seq->name = malloc(strlen(name)*sizeof(char));
+    strcpy(seq->name,name);
+  }
+  else
+    seq->name = NULL;
+  seq->seq = calloc(len,sizeof(char)+1);
+  seq->enc = NULL;
+  seq->len = len;
+  
+  return seq;
+}
+
 /* close_fasta
  *
  * Close the fasta file and free the memory allocated.
@@ -214,6 +232,7 @@ encode_sequence(alphabet_t *a, seq_t *seq)
 */
 
 void
+<<<<<<< HEAD
 seq_delete(seq_t **seqp)
 {
   free((*seqp)->name);
@@ -227,40 +246,48 @@ seq_delete(seq_t **seqp)
 
 void
 free_smat(char ** smat)
+=======
+seq_write_fasta(seq_t *seq, FILE *out, int wrap)
 {
-  int i;
-  for(i = 0; i < 256; i++) {
-    free(smat[i]);
+  int pos,linelen;
+
+  fprintf(out,">%s\n", seq->name);
+  if(wrap > 0) {
+    for(pos = 0; pos < seq->len; pos += wrap) {
+      if(seq->len-pos < wrap)
+        linelen = seq->len-pos;
+      else
+        linelen = wrap;
+      fprintf(out,"%.*s\n", linelen,seq->seq+pos);
+    }
   }
+  else 
+    fprintf(out,"%s\n", seq->seq);
 }
 
+seq_t *
+seq_upper(const seq_t *orig)
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
+{
+  int i;
+  seq_t * upper;
 
-/* 
- * BLOSUM matrix from ebi.ac.uk
- */
-char * custom_blosum[] = {
-"     G   P   D   E   N   H   Q   K   R   S   T   A   M   V   I   L   F   Y   W   C ",
-"  C -3  -4  -3  -3  -2  -3  -3  -3  -3  -1  -1  -1  -2  -1  -3  -2  -2  -3  -5  12 ",
-"  W -2  -3  -4  -3  -4  -3  -2  -2  -2  -4  -3  -2  -2  -3  -2  -2   1   3  15 ",
-"  Y -3  -3  -2  -2  -2   2  -1  -1  -1  -2  -1  -2   0  -1   0   0   3   8 ",
-"  F -3  -3  -4  -3  -2  -2  -4  -3  -2  -2  -1  -2   0   0   0   1   8 ",
-"  L -3  -3  -3  -2  -3  -2  -2  -3  -2  -3  -1  -1   2   1   2   5 ",
-"  I -4  -2  -4  -3  -2  -3  -2  -3  -3  -2  -1  -1   2   3   5 ",
-"  V -3  -3  -3  -3  -3  -3  -3  -2  -2  -1   0   0   1   5 ",
-"  M -2  -2  -3  -2  -2   0   0  -1  -1  -2  -1  -1   6 ",
-"  A  0  -1  -2  -1  -1  -2  -1  -1  -2   1   0   5 ",
-"  T -2  -1  -1  -1   0  -2  -1  -1  -1   2   5 ",
-"  S  0  -1   0   0   1  -1   0  -1  -1   4 ",
-"  R -2  -2  -1   0   0   0   1   3   7 ",
-"  K -2  -1   0   1   0  -1   1   5 ",
-"  Q -2  -1   0   2   0   1   6 ",
-"  H -2  -2   0   0   1  10 ",
-"  N  0  -2   2   0   6 ",
-"  E -2   0   2   6 ",
-"  D -1  -1   7 ",
-"  P -2   9 ",
-"  G  7 ",
-NULL
-};
+  upper = seq_alloc(orig->name, orig->len);
 
+  for(i = 0; i < orig->len; i++) 
+    upper->seq[i] = toupper(orig->seq[i]);
 
+<<<<<<< HEAD
+
+=======
+}
+
+void
+seq_delete(seq_t **seqp)
+{
+  free((*seqp)->name);
+  free((*seqp)->seq);
+  if((*seqp)->enc != NULL) free((*seqp)->enc);
+  free(*seqp);
+}
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659

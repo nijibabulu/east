@@ -3,9 +3,9 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include "east_types.h"
 #include "seq.h"
 
-typedef int score_t;
 typedef struct _smat_t {
   score_t M;
   score_t N;

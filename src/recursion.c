@@ -27,7 +27,11 @@ rmat_new(seq_t * sbjct, seq_t * query)
 }
 
 void
+<<<<<<< HEAD
 rmat_recurse(rmat_t *rmat, smat_t * smat, score_t M, score_t A, score_t N, score_t Q, score_t R, long Z, long Y, int nw)
+=======
+rmat_recurse(rmat_t *rmat, smat_t * smat, score_t Q, score_t R, int nw)
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
 {
   int i,j;
   seq_t *s,*q;

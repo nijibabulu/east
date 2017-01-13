@@ -8,9 +8,6 @@
 #include "statistics.h"
 #include "east_types.h"
 
-#define MAX(x,y) (x) > (y) ? (x) : (y)
-#define MIN(x,y) (x) < (y) ? (x) : (y)
-
 typedef struct _rmat_t {
   seq_t *q;
   seq_t *s;
@@ -24,7 +21,11 @@ typedef struct _rmat_t {
 } rmat_t;
 
 rmat_t * rmat_new(seq_t *,seq_t *);
+<<<<<<< HEAD
 void     rmat_recurse(rmat_t *, smat_t *, score_t M, score_t A, score_t N, score_t Q, score_t R, long Z, long Y, int nw);
+=======
+void     rmat_recurse(rmat_t *, smat_t *, score_t Q, score_t R,  int nw);
+>>>>>>> 7d9889cf1d46769f43156034b5310520d0d23659
 void     rmat_delete(rmat_t **);
  
 #endif /* RECURSION_H */

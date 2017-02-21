@@ -77,7 +77,7 @@ get_next_sequence(FASTAFILE *f, int force_upper)
         if(f->buf[0] == '>') break;
 
         for(s = f->buf; *s != '\0'; s++) {
-            if(!isalpha((int) *s) && !isdigit((int) *s)) continue;
+            if(!isalpha((int) *s) && !isdigit((int) *s) && *s != '*') continue;
             if(force_upper) *s = toupper(*s);
             seq->seq[pos++] = *s;
             if(pos == seq->len) {
@@ -261,6 +261,7 @@ seq_upper(const seq_t *orig)
   for(i = 0; i < orig->len; i++) 
     upper->seq[i] = toupper(orig->seq[i]);
 
+  return upper;
 }
 
 void

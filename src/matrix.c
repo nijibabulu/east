@@ -68,7 +68,6 @@ _smat_read_file(char *filename)
   f = fopen(filename,"r");
   if(f == NULL) {
     sprintf(data_filename, "%s/%s", DATADIR,filename);
-    printf("%s\n",data_filename);
     f = fopen(data_filename,"r");
     if(f == NULL) {
       fprintf(stderr, "Could not open %s for reading!\n", filename);
@@ -91,15 +90,15 @@ _smat_read_file(char *filename)
   lines = malloc(sizeof(char *)*(nlines+1));
   lines[0] = buffer;
   for(i = 0, line = 0; i < size; i++) {
-    putc(buffer[i],stdout);
+    /*putc(buffer[i],stdout);*/
     if(buffer[i] == '\n') {
       buffer[i] = '\0';
-      printf("%d %s\n",line,lines[line-1]);
       lines[++line] = (char *)((long)buffer)+i+1;
+      /*printf("%d %s\n",line,lines[line-1]);*/
     }
   }
   lines[line] = NULL;
-  printf("%d\n", line);
+  /*printf("%d\n", line);*/
 
   return lines;
 }
@@ -109,7 +108,7 @@ smat_read(char *filename, int N)
 {
   char **lines;
   char * columns, row, *s, *tail;
-  int ncolumns = 0, v, c, i, j;
+  int ncolumns = 0, v, c, i, j, M = 0;
   smat_t *smat;
 
   smat = smat_create_from_MN(NULL, 0, N);
@@ -145,12 +144,15 @@ smat_read(char *filename, int N)
         fprintf(stderr, "Overflow in line %d:\n%s", i, lines[i]);
         exit(1);
       }
+      if(columns[c] == row) 
+          M += v;
       smat->s[columns[c]][row] = v;
       smat->s[row][columns[c]] = v;
       c++;
       s = tail;
     }
   }
+  smat->M = M / ncolumns;
   
   return smat;
 }

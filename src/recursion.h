@@ -22,6 +22,7 @@ typedef struct _rmat_t {
 
 rmat_t * rmat_new(seq_t *,seq_t *);
 void     rmat_recurse(rmat_t *, smat_t *, score_t Q, score_t R,  int nw);
+void     rmat_print(rmat_t *rmat,FILE *out);
 void     rmat_delete(rmat_t **);
  
 #endif /* RECURSION_H */

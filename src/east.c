@@ -68,9 +68,10 @@ main(int argc, char *argv[])
   while ((c = getopt_long(argc, argv, optstring, opts, &longindex)) != -1) {
     if(process_standard_opt(c) != 0) usage();
   }
-  if(matrix_name != NULL) 
+  if(matrix_name != NULL) {
+      a = NULL;
       smat = smat_read(matrix_name,N);
-  else if(iupac)  {
+  } else if(iupac)  {
       a = find_alphabet("IUPAC");
       smat = smat_iupac(M, A, N);
   }
@@ -105,11 +106,12 @@ main(int argc, char *argv[])
     nsrmat = rmat_new(sbjct, query);
   }
   rmat_recurse(rmat, smat, Q, R, nw);
-  rmat_recurse_noshadow(nsrmat, smat, Q, R, nw);
+  /*rmat_recurse_noshadow(nsrmat, smat, Q, R, nw);*/
   if(nw) ftb = nw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND);
   else   ftb = sw_tb(rmat, smat, PLUS_STRAND, PLUS_STRAND, z, y);
   tb = ftb;
-  if(rev && (!strcmp(a->name, "DNA") || !strcmp(a->name, "IUPAC"))) { /* also RNA when we support this */
+  if(rev && a != NULL && 
+          (!strcmp(a->name, "DNA") || !strcmp(a->name, "IUPAC"))) { /* also RNA when we support this */
     rsbjct = reverse_complement(sbjct);
     rmat->s = rsbjct;
     rmat_recurse(rmat, smat, Q, R, nw);

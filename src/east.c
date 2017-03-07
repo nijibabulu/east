@@ -26,7 +26,7 @@ print_alignment_header(FILE *f)
 {
   fprintf(f, "East 1.0 -- Smith-Waterman and Needleman-Wunsch Alignments\n");
   fprintf(f, "\n");
-  fprintf(f, "Copyright (C) 2010 Bob Zimmermann\n");
+  fprintf(f, "Copyright (C) 2017 Bob Zimmermann\n");
   fprintf(f, "\n");
   fprintf(f, "Parameters:\n");
   fprintf(f, "Match Score = %d, Mismatch Score = %d\n",M,N); 
@@ -90,7 +90,7 @@ main(int argc, char *argv[])
   rsbjct = NULL;
   rtb = ftb = NULL;
   for(sf = open_fasta(argv[0]), sbjct = get_next_sequence(sf,1);
-      sbjct != NULL;  sbjct = get_next_sequence(sf,1)) {
+      sbjct != NULL;  sbjct = get_next_sequence(sf, 1)) {
     for(qf = open_fasta(argv[1]), query = get_next_sequence(qf,1);
         query != NULL; query = get_next_sequence(qf, 1)) {
 
@@ -99,11 +99,14 @@ main(int argc, char *argv[])
 
   ka = kaparams_estimate(M, N);
 
-  if(rmat == NULL || rmat->s->len < sbjct->len || rmat->q->len < query->len) {
+  if(rmat == NULL || rmat->ssize < sbjct->len || rmat->qsize < query->len) {
     if(rmat != NULL)
       rmat_delete(&rmat);
     rmat = rmat_new(sbjct, query);
     nsrmat = rmat_new(sbjct, query);
+  }
+  else {
+    rmat_set_seqs(rmat, sbjct, query);
   }
   rmat_recurse(rmat, smat, Q, R, nw);
   /*rmat_recurse_noshadow(nsrmat, smat, Q, R, nw);*/
@@ -134,10 +137,11 @@ main(int argc, char *argv[])
     tb_print_table_row(stdout, tb);
   }
   else {
-    if(header) {
+    if(header && header_printed == 0) {
         print_alignment_header(stdout);
         if(!nw) 
           kaparams_print(stdout, ka);
+        header_printed = 1;
     }
     tb_print(stdout, tb);
     tb_delete(&ftb);
@@ -147,7 +151,7 @@ main(int argc, char *argv[])
   seq_delete(&query);
     }
   close_fasta(qf);
-  rmat_delete(&rmat);
+  /*rmat_delete(&rmat);*/
   seq_delete(&sbjct);
   if(rsbjct != NULL) 
     seq_delete(&rsbjct);

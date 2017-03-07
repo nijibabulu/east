@@ -11,6 +11,7 @@
 typedef struct _rmat_t {
   seq_t *q;
   seq_t *s;
+  size_t qsize,ssize;
   score_t **ms,**gs; /* primary scoring matrix and affine gap matrix*/
   char **mp, **gp;
   score_t max;
@@ -21,6 +22,7 @@ typedef struct _rmat_t {
 } rmat_t;
 
 rmat_t * rmat_new(seq_t *,seq_t *);
+void     rmat_set_seqs(rmat_t *, seq_t *, seq_t *);
 void     rmat_recurse(rmat_t *, smat_t *, score_t Q, score_t R,  int nw);
 void     rmat_print(rmat_t *rmat,FILE *out);
 void     rmat_delete(rmat_t **);

@@ -7,8 +7,12 @@ rmat_new(seq_t * sbjct, seq_t * query)
   int i;
 
   rmat = malloc(sizeof(rmat_t));
-  rmat->s = sbjct;
-  rmat->q = query;
+
+  rmat->ssize = 0;
+  rmat->qsize = 0;
+
+  rmat_set_seqs(rmat,sbjct,query);
+
   rmat->ms = malloc(sizeof(score_t *) * (rmat->s->len+1));
   rmat->gs = malloc(sizeof(score_t *) * (rmat->s->len+1));
   rmat->mp = malloc(sizeof(score_t *) * (rmat->s->len+1));
@@ -24,6 +28,14 @@ rmat_new(seq_t * sbjct, seq_t * query)
   rmat->maxj = 0;
 
   return rmat;
+}
+void 
+rmat_set_seqs(rmat_t *rmat, seq_t *sbjct, seq_t *query)
+{
+  rmat->s = sbjct;
+  rmat->q = query;
+  rmat->ssize = MAX(rmat->ssize,sbjct->len);
+  rmat->qsize = MAX(rmat->qsize,query->len);
 }
 
 void
@@ -67,9 +79,8 @@ rmat_recurse(rmat_t *rmat, smat_t * smat, score_t Q, score_t R, int nw)
     }
   }
   else {
-    /* alignment will end at 0, so there is no need to put traceback pointers */
-    for(i = 1; i < s->len + 1; i++) { gs[i][0] = ms[i][0] = 0; }
-    for(j = 1; j < q->len + 1; j++) { gs[0][j] = ms[0][j] = 0; }
+    for(i = 1; i < s->len + 1; i++) { gs[i][0] = ms[i][0] = 0; gp[i][0] = 3; }
+    for(j = 1; j < q->len + 1; j++) { gs[0][j] = ms[0][j] = 0; gp[0][j] = 4; }
   }
 
   for(i = 1; i < s->len+1; i++) {
@@ -248,5 +259,6 @@ rmat_delete(rmat_t **rmatp)
   free((*rmatp)->gs);
   free((*rmatp)->gp);
   free(*rmatp);
+  *rmatp = NULL;
 }
     

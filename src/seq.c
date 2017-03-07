@@ -149,6 +149,7 @@ reverse_complement(seq_t *seq)
 
   rc = malloc(sizeof(seq_t));
   rc->len = seq->len;
+  rc->enc = NULL;
   rc->name = malloc(sizeof(char)*(strlen(seq->name)+1));
   strcpy(rc->name, seq->name);
   rc->seq = malloc(sizeof(char *)*(seq->len+1));
@@ -271,4 +272,5 @@ seq_delete(seq_t **seqp)
   free((*seqp)->seq);
   if((*seqp)->enc != NULL) free((*seqp)->enc);
   free(*seqp);
+  *seqp = NULL;
 }
